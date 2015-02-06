@@ -6,6 +6,9 @@ var Future = require('data.future');
 var _ = require('ramda');
 IO.extendFn();
 
+
+var log = function(x) { console.log(x); return x; };
+
 // Exercise 1
 // ==========
 // Use safeGet and map/mjoin or chain to safetly get the street name when given a user
@@ -22,8 +25,7 @@ var user = {
   }
 };
 
-var ex1 = undefined
-
+var ex1 = _.compose(chain(safeGet('name')), chain(safeGet('street')), safeGet('address'));
 
 // Exercise 2
 // ==========
@@ -36,21 +38,20 @@ var pureLog = function(x) {
   return x;
 }.toIO();
 
-var ex2 = undefined
-
+var ex2 = _.compose(chain(pureLog), getFile)
 
 
 // Exercise 3
 // ==========
 // Use monads to first get the Post with getPost(), then pass it's id in to getComments().
 
-var ex3 = undefined
+var ex3 = _.compose(chain(getComments), map(get('id')), getPost)
 
 
 // Exercise 4
 // ==========
 // Use safeGet to retrieve the user's name, then upperCase it, then safeGet the first char: safeGet(0). The signature should be: User -> Maybe(String)
-var ex4 = undefined
+var ex4 = _.compose(chain(safeGet(0)), map(_.toUpper), safeGet('name'))
 
 
 

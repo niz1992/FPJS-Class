@@ -9,9 +9,7 @@ var curry = _.curry
 //==============
 
 //+ words :: String -> [String]
-var words = function(str) {
-  return split(' ', str);
-}
+var words = split(' ');
 
 // Exercise 1a
 // split :: String -> String -> [String]
@@ -19,18 +17,16 @@ var words = function(str) {
 //use map to make a new words fn that not only works on 1 string, but on an array of strings.
 //+ words :: String -> [String]
 //+ sentences :: [String] -> [[String]]
-var sentences = undefined;
+var sentences = _.map(words);
 
+// var sentences = _.map(function(x){return words(x)})
 
 // Exercise 2
 // match :: Regex -> String -> Bool
 //==============
 
 //+ filterQs :: [String] -> [String]
-var filterQs = function(xs) {
-  return filter(function(x){ return match(/q/i, x);  }, xs);
-}
-
+var filterQs = filter(match(/q/i));
 
 // Exercise 3
 //==============
@@ -40,25 +36,29 @@ var filterQs = function(xs) {
 var _keepHighest = function(x,y){ return x >= y ? x : y; }; // <- leave be
 
 //+ max :: [Number] -> Number
-var max = function(xs) {
-  return reduce(function(acc, x){
-    return _keepHighest(acc, x);
-  }, 0, xs);
-}
+var max = reduce(_keepHighest, 0);
+
+
+  // return reduce(function(acc, x){
+  //   return _keepHighest(acc, x);
+  // }, 0, xs);
 
   
 // Bonus 1:
 // ============
 // wrap array's slice to be funcitonal and curried.
 // //[1,2,3].slice(0, 2)
-var slice = undefined
+var slice = curry(function(ind1, ind2, array){
+  return array.slice(ind1,ind2);
+})
 
 
 // Bonus 2:
 // ============
 // use slice to define a function "take" that takes n elements. make it's curried
-var take = undefined
-
+var take = curry(function(ind2, array){
+  return array.slice(0,ind2);
+})
 
 module.exports = { words: words,
                    sentences: sentences,

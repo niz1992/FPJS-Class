@@ -16,15 +16,17 @@ var CARS = [
 // Exercise 1:
 // ============
 // use _.compose() to rewrite the function below. Hint: _.get() is curried.
-var isLastInStock = function(cars) {
-  var reversed_cars = _.last(cars)
-  return _.get('in_stock', reversed_cars)
-}
+var isLastInStock = _.compose(_.get('in_stock'), _.last);
+
+  // return _.last(cars)['in_stock'];
+  
+  // var reversed_cars = _.last(cars)
+  // return _.get('in_stock', reversed_cars)
 
 // Exercise 2:
 // ============
 // use _.compose(), _.get() and _.head() to retrieve the name of the first car
-var nameOfFirstCar = undefined;
+var nameOfFirstCar = _.compose(_.get('name'), _.head);
 
 
 // Exercise 3:
@@ -34,10 +36,15 @@ var nameOfFirstCar = undefined;
 var _average = function(xs) { return reduce(add, 0, xs) / xs.length; }; // <- leave be
 
 //+ averageDollarValue :: [Car] -> Number
-var averageDollarValue = function(cars) {
-  var dollar_values = map(function(c) { return c.dollar_value; }, cars);
-  return _average(dollar_values);
-}
+var averageDollarValue = 
+// _.compose(_average, _.compose(_.get('dollar_value'), _.map))
+_.compose(_average, map(_.get('dollar_value')))
+//
+
+// function(cars) {
+//   var dollar_values = map(function(c) { return c.dollar_value; }, cars);
+//   return _average(dollar_values);
+// }
 
 
 // Exercise 4:
@@ -47,7 +54,9 @@ var averageDollarValue = function(cars) {
 var _underscore = replace(/\W+/g, '_'); //<-- leave this alone and use to sanitize
 
 //+ sanitizeNames :: [Car] -> String
-var sanitizeNames = undefined
+var sanitizeNames = _.map(_.compose( _.toLower, _underscore, _.get('name')))
+
+//map(function(x){ return _underscore(_.toLower(x.name)) })
 
 
 // Bonus 1:
@@ -55,12 +64,18 @@ var sanitizeNames = undefined
 // Refactor availablePrices with compose.
 
 //+ availablePrices :: [Car] -> String
-var availablePrices = function(cars) {
-  var available_cars = _.filter(_.get('in_stock'), cars);
-  return available_cars.map(function(x){
-    return accounting.formatMoney(x.dollar_value)
-  }).join(', ');
-}
+var availablePrices = _.compose(
+  _.join(', '), 
+  map(_.compose(accounting.formatMoney, 
+  _.get('dollar_value'))), 
+  _.filter(_.get('in_stock')));
+
+// function(cars) {
+//   var available_cars = _.filter(_.get('in_stock'), cars);
+//   return available_cars.map(function(x){
+//     return accounting.formatMoney(x.dollar_value)
+//   }).join(', ');
+// }
 
 
 // Bonus 2:
@@ -68,11 +83,19 @@ var availablePrices = function(cars) {
 // Refactor to pointfree. Hint: you'll probably need _.flip()
 
 //+ fastestCar :: [Car] -> String
-var fastestCar = function(cars) {
-  var sorted = _.sortBy(function(car){ return car.horsepower }, cars);
-  var fastest = _.last(sorted);
-  return fastest.name + ' is the fastest';
-}
+//
+var append = flip(concat);
+
+var fastestCar = _.compose(
+  (function(x){ return x + ' is the fastest'}),
+  _.get('name'),
+  _.last,
+  _.sortBy(_.get('horsepower')))
+// function(cars) {
+//   var sorted = _.sortBy(function(car){ return car.horsepower }, cars);
+//   var fastest = _.last(sorted);
+//   return fastest.name + ' is the fastest';
+// }
 
 
 module.exports = { CARS: CARS,
